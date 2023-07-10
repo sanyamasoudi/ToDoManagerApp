@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="OIP %283%29.jpg" />
+    <None Remove="OIP.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NSwag.ApiDescription.Client" Version="13.19.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="images\OIP.jpg" />
+    <Resource Include="images\@Wallpaper_4K3D (13141).jpg" />
+    <Resource Include="images\@Wallpaper_4K3D (9782).jpg" />
+    <Resource Include="images\@Wallpaper_4K3D (10144).jpg" />
+    <Resource Include="images\R.jpg" />
+    <Resource Include="images\F.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebAndSwaggerClient\MVVM\MVVM.csproj" />
+    <ProjectReference Include="..\WebAndSwaggerClient\Swagger\Swagger.csproj" />
+  </ItemGroup>
+
+</Project>
