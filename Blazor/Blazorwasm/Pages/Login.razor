@@ -1,0 +1,65 @@
+﻿@page "/login"
+@inject NavigationManager NavigationManager
+@using SwaggerClient;
+<div style="background: url(@backgroundImageUrl); background-size: cover;width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: -1; display: flex; justify-content: center; align-items: center;">
+    <div style="background: rgba(0,0,0,0.6); padding: 2rem; border-radius: 10px; color: white;">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <h2>UserName</h2>
+            <input type="text" @bind="UserNameBox" />
+            <h2>Password</h2>
+            <input type="password" @bind="PassWordBox" />
+            <button style="margin-top: 1rem; padding: 0.5rem 1rem; background-color: #b9f2ff; color: black; font-size: 1.2rem; font-family: Elephant;" @onclick="Register_Click">Register</button>
+            <button style="margin-top: 1rem; padding: 0.5rem 1rem; background-color: #b9f2ff; color: black; font-size: 1.5rem; font-family: Elephant;" @onclick="Login_Click">Login</button>
+            @if (!string.IsNullOrWhiteSpace(Message))
+            {
+                <div style="margin-top: 1rem; color: rgb(255, 0, 0);">@Message</div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    
+    string _UserNameBox;
+    public string UserNameBox 
+    { 
+        get=>_UserNameBox;
+        set
+        {
+            _UserNameBox=value;
+            UserNameSaver.UserName=value;
+        }
+    }
+    public string PassWordBox { get; set; }
+    public string Message { get; set; }
+
+    private readonly string backgroundImageUrl = "images/C.jpg";
+
+    private async Task Register_Click()
+    {
+        try
+        {
+            await SwaggerClient.Methods.RegisterAsync(this.UserNameBox,int.Parse(this.PassWordBox));
+            Message="Successfully Registered";
+        }
+        catch(HttpRequestException)
+        {Message="An error occured please try again";}
+    }
+
+    private async Task Login_Click()
+    {
+        bool userfound=false;
+        try
+        {
+            userfound=await SwaggerClient.Methods.LoginAsync(this.UserNameBox,int.Parse(this.PassWordBox)); 
+            if(userfound)   
+            {
+                Message = "Login successful!";
+                NavigationManager.NavigateTo("/MainPage");
+            }
+            else Message = "Invalid username or password!";
+        }
+        catch(HttpRequestException)
+        {Message="An error occured please try again";}
+    }
+}

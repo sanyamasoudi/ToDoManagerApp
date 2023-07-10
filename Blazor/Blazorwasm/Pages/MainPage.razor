@@ -1,0 +1,184 @@
+﻿@page "/MainPage"
+@using System.Collections.ObjectModel;
+@using SwaggerClient;
+@inject NavigationManager NavigationManager
+@using MVVM;
+@inject IJSRuntime JS;
+<img src="@("/images/F.jpg")" alt="Background Image" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: -1" />
+<div style="text-align: center;">
+    <button class="btn"  @onclick="@AddToDo" >Add ToDo</button>
+    <button class="btn" @onclick="@ShowToDo">Show ToDo</button>
+    <button class="btn" @onclick="@DeleteToDo"  >Delete ToDo</button>
+    <button class="btn" @onclick="@ChatGPT">Chat Gpt</button>
+
+</div>
+<br><br><br><br>
+<div class="cardDatagrid" style="width: @(DataGridWidth)px;text-align: center;" >
+<table >
+    <thead>
+        <tr>
+            <th style="color: white;font-size: 20px;">Subject</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th style="color: white;font-size: 20px;">Description</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th style="color: white;font-size: 20px;">IsCompleted</th>
+            <button type="button" @onclick="@Close" class="btn-close btn-close-white" aria-label="Close"></button>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in SCollection.ToDoCollection)
+        {
+            <tr>
+                <td style="color: white;font-size: 20px;">@item.Subject</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="color: white;font-size: 20px;">@item.Description</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="text-align:center;">
+                    <input type="checkbox" checked="@item.IsCompleted" @onchange="@(() => MarkToDoAsCompleted(item))" class="my-checkbox" >
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+    <br><br><br><br><br><br><br><br>
+    <div style="margin-top: 1rem; color: rgb(255, 0, 0);font-size: 25px;">@Message</div>
+    <input size="130" @bind="@DescriptionBox" placeholder="Description" style="height: 50px;"/>
+    <input size="35" @bind="@NameBox" placeholder="Name" style="height: 50px;"/>
+<style>
+    .btn {
+        color: white;
+        background-color: #FF010002;
+        font-size: 50px;
+        font-family: "Blackadder ITC";
+        height: 48px;
+        line-height: 48px;
+        margin-top: 20px;
+    }
+
+    .cardDatagrid {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        margin-left: 400px;
+        width: 400px;
+        height: 400px;
+        overflow-x: auto;
+        overflow-y: hidden;
+       
+    }
+   .my-checkbox {
+       width: 24px;
+       height: 24px;
+       margin-right: 8px;
+   }
+</style>
+@code {
+    public string NameBox { get; set; }
+    public string DescriptionBox { get; set; }
+    public bool IsCompleted { get; set; }
+    public string Message{ get; set; }="";
+    public MVVM.SynchronizedCollection<ToDoItemsBlazor> SCollection=new MVVM.SynchronizedCollection<ToDoItemsBlazor>("http://localhost:5292/CollectionHub",UserNameSaver.UserName);
+    public int DataGridWidth { get; set; } = 0;
+    async Task MarkToDoAsCompleted(ToDoItemsBlazor todo)
+    {
+        if(todo.IsCompleted==false)
+        {
+            try
+            {
+                
+                await SwaggerClient.Methods.MarkTaskAsComplete(todo.Subject,UserNameSaver.UserName);
+                todo.IsCompleted=true; 
+
+                SCollection.Update(SCollection.ToDoCollection,UserNameSaver.UserName);        
+                SCollection.SendNotify(UserNameSaver.UserName);
+            }
+            catch(HttpRequestException)
+            {Message="An error occured please try again";} 
+        }
+        else
+        {
+            try
+            {
+                await SwaggerClient.Methods.MarkTaskAsNotComplete(todo.Subject,UserNameSaver.UserName);
+                todo.IsCompleted=false;   
+
+                SCollection.Update(SCollection.ToDoCollection,UserNameSaver.UserName);        
+                SCollection.SendNotify(UserNameSaver.UserName);
+            }
+            catch(HttpRequestException)
+            {Message="An error occured please try again";} 
+        }
+    }
+    async Task InitialCollection()
+    {
+        SCollection.ToDoCollection.Clear();
+        try
+        {
+            var response=await SwaggerClient.Methods.GetAllTask(UserNameSaver.UserName);
+            foreach(var i in response)
+            {
+                SCollection.ToDoCollection.Add(new ToDoItemsBlazor{Subject=i.Subject,Description=i.Description,IsCompleted=i.IsCompleted});
+            }
+        }
+        catch(HttpRequestException)
+        {Message="An error occured please try again";}
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await InitialCollection();
+    }
+    void ShowToDo()
+    {
+        Message="";
+        DataGridWidth = 700;
+    }
+    void Close()
+    {
+        Message="";
+        DataGridWidth = 0;
+    }
+    async Task AddToDo()
+    {
+        try
+        {
+            SCollection.SendNotify(UserNameSaver.UserName);
+            SCollection.Add(new ToDoItemsBlazor{Subject=this.NameBox,Description=this.DescriptionBox,IsCompleted=false},UserNameSaver.UserName);
+            await SwaggerClient.Methods.AddTask(this.NameBox,this.DescriptionBox,false,UserNameSaver.UserName);
+            Message="Successfully Added";
+        }
+        catch(HttpRequestException)
+        {Message="An error occured please try again";}
+    }
+
+    async Task DeleteToDo()
+    {
+        try
+        {
+            var item = SCollection.ToDoCollection.FirstOrDefault(i => i.Subject == this.NameBox && i.Description == this.DescriptionBox);
+            if(item!=null)
+            {
+                SCollection.SendNotify(UserNameSaver.UserName);
+                SCollection.RemoveTask(SCollection.ToDoCollection.IndexOf(item), UserNameSaver.UserName);
+                await SwaggerClient.Methods.DeleteTask(this.NameBox,this.DescriptionBox,UserNameSaver.UserName);
+                Message="Succesfully Deleted";
+            }
+            else
+                Message="Item not found."; 
+        }
+        catch(HttpRequestException)
+        {Message="An error occured please try again";} 
+    }
+
+    void ChatGPT()
+    {
+        NavigationManager.NavigateTo("/ProfilePage");
+    }
+}

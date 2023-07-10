@@ -1,0 +1,98 @@
+@page "/ChatGPT"
+@using SwaggerClient;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.JSInterop;
+@inject IJSRuntime JS
+
+    <img src="@("/images/A.jpg")" alt="Background Image" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: -1" />
+  <div class="container">
+    <div class="left-column">
+        <button class="button" @onclick="InspireForTaskWithPoem_Click">Inspire With Molavi</button>
+         <input type="number" class="form-control" @bind="@Duration" size="10" height="50px" placeholder="min" />
+        <button class="button" @onclick="BreakTask_Click">Break Task</button>
+        <button class="button" @onclick="InspireWithMovies_Click">Inspire With Movies</button>
+    </div>
+    <div class="right-column">
+        <button class="button" @onclick="InspireWithFoods_Click">Inspire With Foods</button>
+        <button class="button" @onclick="InspireWithActivities_Click">Inspire With Activities</button>
+    </div>
+    <br> <br> <br> <br> <br> <br>
+</div>
+    <div class="input-container">
+        <input size="170" @bind="@TodoDescription" placeholder="TodoDescription" style="height: 50px;"/> 
+    </div>
+<style>
+.container {
+    position: relative;
+}
+
+.left-column {
+    position: absolute;
+    margin-top: 350px;
+    margin-left: 1200px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+}
+
+.right-column {
+    position: absolute;
+    margin-top: 350px;
+    margin-left: 50px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+}
+
+.input-container {
+    position: absolute;
+    bottom: 30px;
+    margin-left: 10px;
+}
+
+.button {
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    border: 2px solid #fff;
+    color: #fff;
+    background-color: rgba(255, 0, 0, 0);
+    font-size: 40px;
+    font-family: "Blackadder ITC";
+    cursor: pointer;
+    border-radius: 20px;
+}
+.button:hover
+{
+    background-color: rgba(114, 123, 125, 0.319);
+}
+</style>
+
+@code {
+    public string TodoDescription { get; set; }
+    public int Duration{ get; set; }
+    private async Task InspireForTaskWithPoem_Click()
+    {
+        await JS.InvokeVoidAsync("alert",await SwaggerClient.Methods.InspireWithMolaviAsync(this.TodoDescription));
+    }
+
+    private async Task BreakTask_Click()
+    {
+        await JS.InvokeVoidAsync("alert",await SwaggerClient.Methods.BreakTaskAsync(this.TodoDescription,this.Duration));
+    }
+
+    private async Task InspireWithMovies_Click()
+    {
+        await JS.InvokeVoidAsync("alert",await SwaggerClient.Methods.InspireWithMovieAsync(UserNameSaver.UserName,this.TodoDescription));
+    }
+
+    private async Task InspireWithActivities_Click()
+    {
+        await JS.InvokeVoidAsync("alert",await SwaggerClient.Methods.InspireWithActivityAsync(UserNameSaver.UserName,this.TodoDescription));
+    }
+
+    private async Task InspireWithFoods_Click()
+    {
+        await JS.InvokeVoidAsync("alert",await SwaggerClient.Methods.InspireWithFoodAsync(UserNameSaver.UserName,this.TodoDescription));
+    }
+
+}

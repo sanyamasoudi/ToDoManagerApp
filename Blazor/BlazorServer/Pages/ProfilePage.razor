@@ -1,0 +1,82 @@
+@page "/ProfilePage"
+@using Microsoft.AspNetCore.Components.Web
+@using MVVM;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.JSInterop;
+@inject IJSRuntime JS
+@inject NavigationManager NavigationManager
+<img src="@("/images/D.jpg")" alt="Background Image" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: -1" />
+                    <img src="images\B.jpg" class="rounded-circle mb-3" width="90" height="90" style="position: absolute; left: 56%; transform: translateX(-50%);" />
+                    <br><br><br><br><br>
+                    <h1 class="text-white mb-5" style="font-family: Elephant;">Please Update Your Profile To Continue</h1>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-lg-8">
+                        <div class="form-group">
+                            <h2 class="text-white mb-3">Your Favorite Activities</h2>
+                            <input type="text" class="form-control" @bind-value="@ActivityBox" />
+                        </div>
+                        <div class="form-group">
+                            <h2 class="text-white mb-3">Your Favorite Movies</h2>
+                            <input type="text" class="form-control" @bind-value="@MovieBox" />
+                        </div>
+                        <div class="form-group">
+                            <h2 class="text-white mb-3">Your Favorite Foods</h2>
+                            <input type="text" class="form-control" @bind-value="@FoodBox" />
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-primary btn-lg" @onclick="@Continue_Click">Continue</button>
+                            <p class="text-white mt-3"><em>For best performance, write your interests in English.</em></p>
+                        </div>
+                    </div>
+                </div>
+
+
+<style>
+    .form-control {
+        font-size: 1.25rem;
+        padding: .75rem;
+        border-radius: 0;
+        border: 0;
+        border-bottom: 2px solid #fff;   
+        background-color: transparent;   
+        color: #fff;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-primary {
+        background-color: #FF010002;
+        font-size: 1.5rem;
+        font-family: Elephant, sans-serif;
+        border-radius: 0;
+        padding: 1rem 3rem;
+        box-shadow: none;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #000000;
+    }
+</style>
+
+@code {
+    public string ActivityBox { get; set; }
+    public string MovieBox { get; set; }
+    public string FoodBox { get; set; }
+
+    async Task Continue_Click() //save interests of user
+    {
+        try
+        {
+            await SwaggerClient.Methods.ContinueAsync(ActivityBox,FoodBox,MovieBox,UserNameSaver.UserName);
+            NavigationManager.NavigateTo("/ChatGPT");
+        }
+        catch(Exception)
+        {
+            await JS.InvokeVoidAsync("alert","Please Complete All Of RequiredBox To Continue!");
+        }
+    }
+}
