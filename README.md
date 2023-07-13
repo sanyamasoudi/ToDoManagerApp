@@ -1,5 +1,5 @@
 # ToDoManagerApp
-# IUST Advanced Programming Project..I hope you enjoy <3
+# IUST Advanced Programming Project
 
 The Todo Manager is a application built using c#, SgnalR, database, OpenAi. It allows users to create, read, update, and delete their tasks or to-dos. The application has a login system that ensures only authenticated users can access their to-dos.
 
