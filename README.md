@@ -56,11 +56,11 @@ git clone https://github.com/sanyamasoudi/ToDoManagerApp.git
 6. Break task to SubTasks using "Breaktask" button and Inspire for do your task By Inspires buttons
 
 ## Some picture of wpf client
-<p><img src="https://sanyamasoudi.github.io/sanyamasoudi/assets/ToDoManagerAppImages/1.png" alt="&quot;wpfClient1-finalProject&quot;">
+<p><img src="https://sanyamasoudi.github.io/assets/ToDoManagerAppImages/1.png" alt="&quot;wpfClient1-finalProject&quot;">
   
-<img src="https://sanyamasoudi.github.io/sanyamasoudi/assets/ToDoManagerAppImages/2.png" alt="&quot;wpfClient2-finalProject&quot;">
+<img src="https://sanyamasoudi.github.io/assets/ToDoManagerAppImages/2.png" alt="&quot;wpfClient2-finalProject&quot;">
 
-<img src="https://sanyamasoudi.github.io/sanyamasoudi/assets/ToDoManagerAppImages/3.png" alt="&quot;wpfClient3-finalProject&quot;">
+<img src="https://sanyamasoudi.github.io/assets/ToDoManagerAppImages/3.png" alt="&quot;wpfClient3-finalProject&quot;">
 
-<img src="https://sanyamasoudi.github.io/sanyamasoudi/assets/ToDoManagerAppImages/4.png" alt="&quot;wpfClient4-finalProject&quot;"></p>
+<img src="https://sanyamasoudi.github.io/assets/ToDoManagerAppImages/4.png" alt="&quot;wpfClient4-finalProject&quot;"></p>
   
